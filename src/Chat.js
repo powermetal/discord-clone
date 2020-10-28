@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
 import './Chat.css';
-import AlwaysScrollToBottom from './AlwaysScrollToBottom';
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
@@ -19,22 +18,19 @@ const Chat = () => {
     const user = useSelector(selectUser);
     const channelName = useSelector(selectChannelName);
     const selectedChannel = useSelector(selectChannel);
-    console.log('selected channel render:' + selectedChannel);
     const [input, setInput] = useState('')
     const [messages, setMessages] = useState([]);
 
-    useEffect(() => {
+    useEffect(() => {       
+        let unsubscribe = () => {};
         if (selectedChannel) {
-            db.collection('channels').doc(selectedChannel).collection('messages').orderBy('timestamp').onSnapshot(snapshot => {
-                setMessages(snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    message: doc.data(),
-                })))
+            unsubscribe = db.collection('channels').doc(selectedChannel).collection('messages').orderBy('timestamp').onSnapshot(snapshot => {
+                setMessages(snapshot.docs.map(doc => ({id: doc.id, message: doc.data()})))
                 elementRef.current.scrollIntoView()
-            }
-        )
-    }}, [selectedChannel])
-
+            })
+        }
+        return unsubscribe;
+    }, [selectedChannel])
 
     const onSendMessage = (event) => {
         event.preventDefault();
@@ -51,12 +47,7 @@ const Chat = () => {
         <div className="chat">
             <ChatHeader />
             <div className="chat__messages">
-                {messages.map((m) => <Message
-                key={m.id}
-                messageData={m.message.text}
-                user={m.message.user}
-                timestamp={m.message.timestamp}
-                />)}
+                {messages.map(m => <Message key={m.id} messageData={m.message.text} user={m.message.user} timestamp={m.message.timestamp}/>)}
                 <div ref={elementRef} />
             </div>
             <div className="chat__input">
