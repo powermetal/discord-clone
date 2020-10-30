@@ -19,14 +19,14 @@
 
 .chatHeader__right {
     display: flex;
-    flex: 0.3;
+    flex: 0.2;
     align-items: center;
     justify-content: space-between;
     margin-right: 5px;
 }
 
 .chatHeader__right > .MuiSvgIcon-root {
-    padding: 5px;
+    padding: 10px;
     cursor: pointer;
 }
 
