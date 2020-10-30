@@ -1,3 +1,9 @@
+.channel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .channel > h4 {
     display: flex;
     padding-left: 15px;
@@ -7,13 +13,39 @@
     white-space: nowrap;
 }
 
-.channel:hover > h4{
+.channel:hover {
     background-color: #40464b;
-    color: white;
     border-radius: 5px;
+}
+
+.channel:hover > h4{
+    color: white;
+}
+
+.channel__active {
+    background-color: #4e565c;
+    border-radius: 5px;
+}
+.channel__active > h4{
+    color: white;
 }
 
 .channelHash {
     font-size: 30px;
     padding: 8px;
+}
+
+.channel:hover > .channel__icons {
+    visibility: visible;
+}
+
+.channel__icons {
+    margin-right: 10px;
+    color: gray;
+    visibility: hidden;
+    cursor: pointer;
+}
+
+.channel__icons:hover {
+    color: white;
 }

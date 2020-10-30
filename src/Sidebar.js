@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from './userSlice';
+import { selectChannel } from './appSlice';
 import './Sidebar.css';
 import Channel from './Channel';
 
@@ -19,7 +20,7 @@ import db, { auth } from './firebase';
 const Sidebar = () => {
     const user = useSelector(selectUser)
     const [channels, setChannels] = useState([]);
-
+    
     useEffect(() => {
         db.collection('channels').onSnapshot(snapshot => (
             setChannels(snapshot.docs.map(doc => ({
@@ -34,6 +35,8 @@ const Sidebar = () => {
         db.collection('channels').add({channelName})
     };
 
+    const selectedChannel = useSelector(selectChannel)
+    
     return (
         <div className="sidebar">
             <div className="sidebar__top">
@@ -49,7 +52,7 @@ const Sidebar = () => {
                 <AddIcon onClick={onCreateChannel} className="sidebar__addChannel" />
                 </div>    
                 <div className="sidebar__channelsList">
-                    {channels.map((channel) => <Channel key={channel.id} id={channel.id} name={channel.channelInfo.channelName}/>)}
+                    {channels.map((channel) => <Channel key={channel.id} id={channel.id} name={channel.channelInfo.channelName} active={selectedChannel === channel.id}/>)}
                 </div>
             </div>
             <div className="sidebar__voice">
