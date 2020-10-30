@@ -19,7 +19,10 @@ const Channel = (props) => {
                 <span className="channelHash">#</span>{props.name}
             </h4>
             <div className="channel__icons">
-                <ClearIcon />
+                <ClearIcon onClick={(e) => {
+                    e.stopPropagation()
+                    props.onDelete()
+                }} />
             </div>
         </div>
     )

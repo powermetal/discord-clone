@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectUser } from './userSlice';
-import { selectChannel } from './appSlice';
+import { selectChannel, resetChannelSelected } from './appSlice';
 import './Sidebar.css';
 import Channel from './Channel';
 
@@ -35,8 +35,18 @@ const Sidebar = () => {
         db.collection('channels').add({channelName})
     };
 
+    const dispatch = useDispatch()
+
     const selectedChannel = useSelector(selectChannel)
-    
+
+    const onDeleteChannel = (channelId) => {
+        db.collection('channels').doc(channelId).delete();
+        if(selectedChannel === channelId) {
+            dispatch(resetChannelSelected())
+        }
+    }
+
+       
     return (
         <div className="sidebar">
             <div className="sidebar__top">
@@ -52,7 +62,7 @@ const Sidebar = () => {
                 <AddIcon onClick={onCreateChannel} className="sidebar__addChannel" />
                 </div>    
                 <div className="sidebar__channelsList">
-                    {channels.map((channel) => <Channel key={channel.id} id={channel.id} name={channel.channelInfo.channelName} active={selectedChannel === channel.id}/>)}
+                    {channels.map((channel) => <Channel key={channel.id} id={channel.id} name={channel.channelInfo.channelName} active={selectedChannel === channel.id} onDelete={() => onDeleteChannel(channel.id)}/>)}
                 </div>
             </div>
             <div className="sidebar__voice">
