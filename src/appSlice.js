@@ -10,13 +10,14 @@ export const appSlice = createSlice({
         channelSelected: (state, action) => {
            return {...state, ...action.payload}
         },
-        resetChannelSelected: (state) => {
-            return {...state, channel: null, channelName: null}
+        channelDeleted: (state, action) => {
+            if (state.channel === action.payload)
+                return {...state, channel: null, channelName: null};
         }
     }
 });
 
-export const { channelSelected, resetChannelSelected } = appSlice.actions;
+export const { channelSelected, channelDeleted } = appSlice.actions;
 
 export const selectChannel = (state) => state.app.channel;
 export const selectChannelName = (state) => state.app.channelName;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser } from './userSlice';
-import { selectChannel, resetChannelSelected } from './appSlice';
+import { selectChannel, resetChannelSelected, channelDeleted } from './appSlice';
 import './Sidebar.css';
 import Channel from './Channel';
 
@@ -41,9 +41,7 @@ const Sidebar = () => {
 
     const onDeleteChannel = (channelId) => {
         db.collection('channels').doc(channelId).delete();
-        if(selectedChannel === channelId) {
-            dispatch(resetChannelSelected())
-        }
+        dispatch(channelDeleted(channelId));
     }
 
        
