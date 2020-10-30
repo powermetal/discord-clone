@@ -4,7 +4,6 @@ import { selectUser } from './userSlice';
 import { selectChannel, resetChannelSelected, channelDeleted } from './appSlice';
 import './Sidebar.css';
 import Channel from './Channel';
-
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddIcon from '@material-ui/icons/Add';
 import SignalCellularAltIcon from '@material-ui/icons/SignalCellularAlt';
@@ -15,7 +14,6 @@ import MicIcon from '@material-ui/icons/Mic';
 import HeadsetIcon from '@material-ui/icons/Headset';
 import SettingsIcon from '@material-ui/icons/Settings';
 import db, { auth } from './firebase';
-
 
 const Sidebar = () => {
     const user = useSelector(selectUser)
@@ -30,9 +28,20 @@ const Sidebar = () => {
         ))
     }, [])
 
+    const channelAlreadyExists = (channelName) => channels.find(channel => channel.channelInfo.channelName === channelName);
+
     const onCreateChannel = () => {
-        const channelName = prompt('Enter channel name')
-        db.collection('channels').add({channelName})
+        const channelName = prompt('Enter channel name');
+
+        if (channelAlreadyExists(channelName)) {
+            alert('Channel name already in use')
+            return;
+        }
+            
+        if(channelName && channelName.trim().length >= 1)
+          db.collection('channels').add({channelName: channelName.trim()})
+        else
+            alert('Please enter a name for your channel')
     };
 
     const dispatch = useDispatch()
@@ -44,7 +53,6 @@ const Sidebar = () => {
         dispatch(channelDeleted(channelId));
     }
 
-       
     return (
         <div className="sidebar">
             <div className="sidebar__top">
