@@ -59,7 +59,7 @@ const Channel = (props) => {
         return (
             <div>
                 <form onSubmit={onEditChannel}>
-                    <input value={newChannelName} onChange={e => setNewChannelName(e.target.value)}  onKeyDown={handleKeyPress} />
+                    <input value={newChannelName} ref={(input) => input && input.focus()} onChange={e => setNewChannelName(e.target.value)}  onKeyDown={handleKeyPress} />
                     <button>submit</button>
                 </form>
             </div>
