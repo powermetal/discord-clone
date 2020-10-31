@@ -28,6 +28,8 @@ const Chat = () => {
                 setMessages(snapshot.docs.map(doc => ({id: doc.id, message: doc.data()})))
                 elementRef.current.scrollIntoView()
             })
+        } else{
+            setMessages([])
         }
         return unsubscribe;
     }, [selectedChannel])
