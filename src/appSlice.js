@@ -5,6 +5,7 @@ export const appSlice = createSlice({
     initialState: {
         channel: null,
         channelName: null,
+        editChannelId: null
     },
     reducers: {
         channelSelected: (state, action) => {
@@ -13,13 +14,20 @@ export const appSlice = createSlice({
         channelDeleted: (state, action) => {
             if (state.channel === action.payload)
                 return {...state, channel: null, channelName: null};
+        },
+        channelEdit: (state, action) => {
+            return {...state, editChannelId: action.payload}
+        },
+        channelEdited: (state, action) => {
+            return {...state, editChannelId: null}
         }
     }
 });
 
-export const { channelSelected, channelDeleted } = appSlice.actions;
+export const { channelSelected, channelDeleted, channelEdit, channelEdited } = appSlice.actions;
 
 export const selectChannel = (state) => state.app.channel;
 export const selectChannelName = (state) => state.app.channelName;
+export const selectChannelEdit = (state) => state.app.editChannelId;
 
 export default appSlice.reducer;

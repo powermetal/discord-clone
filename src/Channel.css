@@ -46,6 +46,10 @@
     cursor: pointer;
 }
 
-.channel__icons:hover {
+.channel__editIcon:hover, .channel__deleteIcon:hover {
     color: white;
+}
+
+.channel__icons > .MuiSvgIcon-root {
+    padding: 5px;
 }

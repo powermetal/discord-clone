@@ -45,14 +45,13 @@ const Sidebar = () => {
     };
 
     const dispatch = useDispatch()
-
     const selectedChannel = useSelector(selectChannel)
 
     const onDeleteChannel = (channelId) => {
         db.collection('channels').doc(channelId).delete();
         dispatch(channelDeleted(channelId));
     }
-
+    
     return (
         <div className="sidebar">
             <div className="sidebar__top">
