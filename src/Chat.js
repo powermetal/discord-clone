@@ -36,13 +36,14 @@ const Chat = () => {
 
     const onSendMessage = (event) => {
         event.preventDefault();
-
-        db.collection('channels').doc(selectedChannel).collection('messages').add({
-            text: input,
-            user: user,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        }) 
-        setInput('')
+        if(input.trim().length > 0) {
+            db.collection('channels').doc(selectedChannel).collection('messages').add({
+                text: input,
+                user: user,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            }) 
+            setInput('')
+        }
     }
 
     return (
