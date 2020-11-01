@@ -17,11 +17,40 @@ const Channel = (props) => {
         }))
     }
 
+    const cancelEdit = () => {
+        dispatch(channelEdited())
+        setNewChannelName(props.name)
+    }
+
+    const onEditChannel = (e) => {
+        e.preventDefault()
+        db.collection('channels').doc(channelEditId).set({
+            channelName: newChannelName
+        })
+        dispatch(channelEdited())
+    }
+
+    const handleKeyPress = (e) => {
+        if(e.keyCode === 27)
+            cancelEdit()
+    }
+
+    const editChannel = () => {
+        return (
+            <div className="channel__edit">
+                <form onSubmit={onEditChannel}>
+                    <input className="channel__input" value={newChannelName} onBlur={cancelEdit} ref={(input) => input && input.focus()} onChange={e => setNewChannelName(e.target.value)}  onKeyDown={handleKeyPress} />
+                    <button className="channel__button">submit</button>
+                </form>
+            </div>
+        )
+    }
+
     const channelItem = () => {
         return (
-            <div className={`channel ${props.active ? 'channel__active' : ''}`.trim()} onClick={onSelectChannel}>
+            <div className={`channel__item ${props.active ? 'channel__itemActive' : ''}`.trim()} onClick={onSelectChannel}>
                 <h4>
-                    <span className="channelHash">#</span>{props.name}
+                    {props.name}
                 </h4>
                 <div className="channel__icons">
                     <EditIcon className="channel__editIcon" onClick={(e) => {
@@ -37,40 +66,16 @@ const Channel = (props) => {
         )
     }
 
-    const finishEdit = () => {
-        dispatch(channelEdited())
-        setNewChannelName(props.name)
-    }
-
-    const onEditChannel = (e) => {
-        e.preventDefault()
-        db.collection('channels').doc(channelEditId).set({
-            channelName: newChannelName
-        })
-        dispatch(channelEdited())
-    }
-
-    const handleKeyPress = (e) => {
-        if(e.keyCode === 27)
-            finishEdit()
-    }
-
-    const editChannel = () => {
-        return (
-            <div>
-                <form onSubmit={onEditChannel}>
-                    <input value={newChannelName} ref={(input) => input && input.focus()} onChange={e => setNewChannelName(e.target.value)}  onKeyDown={handleKeyPress} />
-                    <button>submit</button>
-                </form>
-            </div>
-        )
-    }
-
     const renderChannel = () => {
         return (channelEditId && channelEditId === props.id) ? editChannel() : channelItem();
     }
 
-    return renderChannel();
+    return (
+        <div className="channel">
+            <span className={`channelHash ${props.active ? 'channelHash__active' : ''}`}>#</span>
+            {renderChannel()}
+        </div>
+    )
 }
 
 export default Channel;
