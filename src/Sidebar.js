@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser } from './userSlice';
-import { selectChannel, resetChannelSelected, channelDeleted } from './appSlice';
+import { selectChannel, channelEdited, channelDeleted } from './appSlice';
 import './Sidebar.css';
 import Channel from './Channel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -14,6 +14,7 @@ import MicIcon from '@material-ui/icons/Mic';
 import HeadsetIcon from '@material-ui/icons/Headset';
 import SettingsIcon from '@material-ui/icons/Settings';
 import db, { auth } from './firebase';
+import { validateChannel } from './validateChannel'
 
 const Sidebar = () => {
     const user = useSelector(selectUser)
@@ -28,21 +29,11 @@ const Sidebar = () => {
         ))
     }, [])
 
-    const channelAlreadyExists = (channelName) => channels.find(channel => channel.channelInfo.channelName === channelName);
-
     const onCreateChannel = () => {
         const channelName = prompt('Enter channel name');
-
-        if (channelAlreadyExists(channelName)) {
-            alert('Channel name already in use')
-            return;
-        }
-            
-        if(channelName && channelName.trim().length >= 1)
+        if(validateChannel(channelName, channels))
           db.collection('channels').add({channelName: channelName.trim()})
-        else
-            alert('Please enter a name for your channel')
-    };
+    }
 
     const dispatch = useDispatch()
     const selectedChannel = useSelector(selectChannel)
@@ -52,6 +43,13 @@ const Sidebar = () => {
         dispatch(channelDeleted(channelId));
     }
     
+    const onEditChannel = (channelName, channelEditId) => {
+        if(validateChannel(channelName, channels)){
+            db.collection('channels').doc(channelEditId).set({channelName})
+            dispatch(channelEdited())
+        }
+    }
+
     return (
         <div className="sidebar">
             <div className="sidebar__top">
@@ -67,7 +65,14 @@ const Sidebar = () => {
                 <AddIcon onClick={onCreateChannel} className="sidebar__addChannel" />
                 </div>    
                 <div className="sidebar__channelsList">
-                    {channels.map((channel) => <Channel key={channel.id} id={channel.id} name={channel.channelInfo.channelName} active={selectedChannel === channel.id} onDelete={() => onDeleteChannel(channel.id)}/>)}
+                    {channels.map((channel) => <Channel
+                        key={channel.id}
+                        id={channel.id}
+                        name={channel.channelInfo.channelName}
+                        active={selectedChannel === channel.id}
+                        onDelete={() => onDeleteChannel(channel.id)}
+                        onEdit={onEditChannel}
+                    />)}
                 </div>
             </div>
             <div className="sidebar__voice">

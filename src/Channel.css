@@ -75,20 +75,19 @@
     display: flex; 
     background-color: #40464b;
     border-radius: 5px;
+    flex: 1;
 }
 
 .channel__input {    
     background-color: #40464b;
-    padding: 10px 10px 10px 35px;
+    padding: 10px 25px 10px 35px;
     display: flex;
     color: white;
-    align-items: center;
     outline: none;
     border: 0;
     border-radius: 5px;
     font-size: 1em;
     font-weight: bolder;
-    width: 100%;
 }
 
 .channel__button {

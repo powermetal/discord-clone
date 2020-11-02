@@ -24,10 +24,7 @@ const Channel = (props) => {
 
     const onEditChannel = (e) => {
         e.preventDefault()
-        db.collection('channels').doc(channelEditId).set({
-            channelName: newChannelName
-        })
-        dispatch(channelEdited())
+        props.onEdit(newChannelName, props.id)
     }
 
     const handleKeyPress = (e) => {
@@ -39,7 +36,13 @@ const Channel = (props) => {
         return (
             <div className="channel__edit">
                 <form onSubmit={onEditChannel}>
-                    <input className="channel__input" value={newChannelName} onBlur={cancelEdit} ref={(input) => input && input.focus()} onChange={e => setNewChannelName(e.target.value)}  onKeyDown={handleKeyPress} />
+                    <input 
+                        className="channel__input"
+                        value={newChannelName} onBlur={cancelEdit}
+                        ref={(input) => input && input.focus()}
+                        onChange={e => setNewChannelName(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                    />
                     <button className="channel__button">submit</button>
                 </form>
             </div>
