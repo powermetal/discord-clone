@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import Message from './Message';
 import ChatHeader from './ChatHeader';
 import './Chat.css';
-
+import { partition } from './partition';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import CardGiftcardIcon from '@material-ui/icons/CardGiftcard';
@@ -25,7 +25,8 @@ const Chat = () => {
         let unsubscribe = () => {};
         if (selectedChannel) {
             unsubscribe = db.collection('channels').doc(selectedChannel).collection('messages').orderBy('timestamp').onSnapshot(snapshot => {
-                setMessages(snapshot.docs.map(doc => ({id: doc.id, message: doc.data()})))
+                setMessages(partition(snapshot.docs.map(doc => ({id: doc.id, message: doc.data()})),
+                (currentMessage, lastMessages) => currentMessage.message.user.uid === lastMessages[0].message.user.uid))
                 elementRef.current.scrollIntoView()
             })
         } else{
@@ -50,7 +51,7 @@ const Chat = () => {
         <div className="chat">
             <ChatHeader />
             <div className="chat__messages">
-                {messages.map(m => <Message key={m.id} messageData={m.message.text} user={m.message.user} timestamp={m.message.timestamp}/>)}
+                {messages.map(m => <Message key={m[0].id} user={m[0].message.user} timestamp={m[0].message.timestamp} messageData={m.map((message) => {return { text: message.message.text, id: message.id}})}/>)}
                 <div ref={elementRef} />
             </div>
             <div className="chat__input">

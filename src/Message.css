@@ -1,15 +1,22 @@
 .message {
     display: flex;
     margin: 20px;
-    align-items: center;
+    flex-direction: column;
 }
 
-.message__info {
-    margin-left: 10px; 
+.message__header {
+    display: flex;
+    padding: 5px;
 }
 
-.message__info > h4 {
+.message__header:hover {
+    background-color: #32353b;
+    border-radius: 5px;
+}
+
+.message__header h4 {
     color: white;
+    margin-left: 10px;
 }
 
 .message__timestamp {
@@ -18,6 +25,23 @@
     margin-left: 5px;
 }
 
-.message__text {
+.message__first {
+    align-items: flex-end;
+    margin-left: 10px;
     color: white;
+}
+
+.message__stack {
+    margin-top: -5px;
+}
+
+.message__text {
+    margin-left: 55px;
+    color: white;
+}
+
+.message__container:hover {
+    background-color: #32353b;
+    width: 100%;
+    border-radius: 5px;
 }
