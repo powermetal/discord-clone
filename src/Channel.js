@@ -42,6 +42,7 @@ const Channel = (props) => {
                         ref={(input) => input && input.focus()}
                         onChange={e => setNewChannelName(e.target.value)}
                         onKeyDown={handleKeyPress}
+                        spellCheck={false}
                     />
                     <button className="channel__button">submit</button>
                 </form>
