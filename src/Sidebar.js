@@ -15,18 +15,29 @@ import HeadsetIcon from '@material-ui/icons/Headset';
 import SettingsIcon from '@material-ui/icons/Settings';
 import db, { auth } from './firebase';
 import { validateChannel } from './validateChannel'
+import _ from 'lodash';
 
 const Sidebar = () => {
     const user = useSelector(selectUser)
     const [channels, setChannels] = useState([]);
     
+    const findDeletions = (oldChannels, newChannels) => _.differenceBy(oldChannels, newChannels, 'id')
+
+    const findEditions = (newChannels, oldChannels) => {
+        const isEdited = (c1, c2) => c1.id === c2.id && c1.channelInfo.channelName !== c2.channelInfo.channelName;
+        return _.intersectionWith(newChannels, oldChannels, isEdited)
+    }    
+
     useEffect(() => {
-        db.collection('channels').onSnapshot(snapshot => (
-            setChannels(snapshot.docs.map(doc => ({
-                id: doc.id,
-                channelInfo: doc.data(),
-            })))
-        ))
+        db.collection('channels').onSnapshot(snapshot => 
+            setChannels( (previousChannels) => { 
+                    const newChannels = snapshot.docs.map(doc => ({id: doc.id, channelInfo: doc.data()}))
+                    //console.log(findDeletions(previousChannels, newChannels, 'id'))
+                    //console.log(findEditions(newChannels, previousChannels))
+                    return newChannels;
+                }
+            )
+        )
     }, [])
 
     const onCreateChannel = () => {
@@ -46,7 +57,7 @@ const Sidebar = () => {
     const onEditChannel = (channelName, channelEditId) => {
         if(validateChannel(channelName, channels)){
             db.collection('channels').doc(channelEditId).set({channelName})
-            dispatch(channelEdited())
+            dispatch(channelEdited({channelInfo: {channelName}, id: channelEditId}))
         }
     }
 

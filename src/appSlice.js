@@ -19,6 +19,8 @@ export const appSlice = createSlice({
             return {...state, editChannelId: action.payload}
         },
         channelEdited: (state, action) => {
+            if(state.channel && action.payload && state.channel === action.payload.id)
+                return {...state, ...action.payload.channelInfo, editChannelId: null}
             return {...state, editChannelId: null}
         }
     }
