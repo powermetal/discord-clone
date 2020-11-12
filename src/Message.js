@@ -3,7 +3,6 @@ import { Avatar } from '@material-ui/core';
 import './Message.css';
 
 const Message = (props) => {
-    console.log(props)
     return (
         <div className="message">
             <div className="message__header">

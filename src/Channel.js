@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './Channel.css';
-import { channelSelected, channelEdit, selectChannelEdit, channelEdited} from './appSlice';
+import { channelSelected, channelEdit, selectChannelEdit, channelsEdited} from './appSlice';
 import ClearIcon from '@material-ui/icons/Clear';
 import EditIcon from '@material-ui/icons/Edit';
 import db from './firebase';
@@ -18,7 +18,7 @@ const Channel = (props) => {
     }
 
     const cancelEdit = () => {
-        dispatch(channelEdited())
+        dispatch(channelsEdited())
         setNewChannelName(props.name)
     }
 

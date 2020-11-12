@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser } from './userSlice';
-import { selectChannel, channelEdited, channelDeleted } from './appSlice';
+import { selectChannel, channelsEdited, channelsDeleted } from './appSlice';
 import './Sidebar.css';
 import Channel from './Channel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -18,10 +18,13 @@ import { validateChannel } from './validateChannel'
 import _ from 'lodash';
 
 const Sidebar = () => {
+    const selectedChannel = useSelector(selectChannel)
     const user = useSelector(selectUser)
+    const dispatch = useDispatch()
     const [channels, setChannels] = useState([]);
     
     const findDeletions = (oldChannels, newChannels) => _.differenceBy(oldChannels, newChannels, 'id')
+                                                         .map(channel => channel.id)
 
     const findEditions = (newChannels, oldChannels) => {
         const isEdited = (c1, c2) => c1.id === c2.id && c1.channelInfo.channelName !== c2.channelInfo.channelName;
@@ -29,16 +32,25 @@ const Sidebar = () => {
     }    
 
     useEffect(() => {
-        db.collection('channels').onSnapshot(snapshot => 
+        db.collection('channels').onSnapshot(snapshot => {
             setChannels( (previousChannels) => { 
                     const newChannels = snapshot.docs.map(doc => ({id: doc.id, channelInfo: doc.data()}))
-                    //console.log(findDeletions(previousChannels, newChannels, 'id'))
-                    //console.log(findEditions(newChannels, previousChannels))
+                    const deletions = findDeletions(previousChannels, newChannels)
+                    if(deletions.length > 0)
+                        dispatch(channelsDeleted(deletions))
+                    const editions = findEditions(newChannels, previousChannels)
+                    if(editions.length > 0)
+                        dispatch(channelsEdited(editions))
                     return newChannels;
                 }
-            )
+            )}
         )
     }, [])
+
+    useEffect(()=> {
+        if(selectedChannel)
+        db.collection('channels').doc(selectedChannel).collection('messages').onSnapshot(snapshot => console.log(snapshot.size))
+    }, [selectedChannel])
 
     const onCreateChannel = () => {
         const channelName = prompt('Enter channel name');
@@ -46,18 +58,13 @@ const Sidebar = () => {
           db.collection('channels').add({channelName: channelName.trim()})
     }
 
-    const dispatch = useDispatch()
-    const selectedChannel = useSelector(selectChannel)
-
     const onDeleteChannel = (channelId) => {
         db.collection('channels').doc(channelId).delete();
-        dispatch(channelDeleted(channelId));
     }
     
     const onEditChannel = (channelName, channelEditId) => {
         if(validateChannel(channelName, channels)){
             db.collection('channels').doc(channelEditId).set({channelName})
-            dispatch(channelEdited({channelInfo: {channelName}, id: channelEditId}))
         }
     }
 
